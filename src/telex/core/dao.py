@@ -71,7 +71,7 @@ class MessageQueueDAO:
         """
         Get the next batch of pending messages.
         
-        Returns oldest PENDING messages in FIFO order.
+        Returns oldest PENDING messages in FIFO order (ordered by created_at ASC).
         
         Args:
             limit: Maximum number of messages to return
@@ -86,7 +86,7 @@ class MessageQueueDAO:
                 SELECT id, priority, payload, created_at, status
                 FROM message_queue
                 WHERE status = ?
-                ORDER BY created_at ASC, priority DESC
+                ORDER BY created_at ASC
                 LIMIT ?
                 """,
                 (MessageStatus.PENDING.value, limit),
@@ -104,7 +104,7 @@ class MessageQueueDAO:
                         status=MessageStatus(row["status"]),
                     )
                     messages.append(msg)
-                except Exception as e:
+                except (json.JSONDecodeError, ValueError, KeyError) as e:
                     logger.error(
                         "Error parsing message from database",
                         message_id=row["id"],

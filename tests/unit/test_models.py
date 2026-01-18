@@ -5,6 +5,7 @@ from datetime import datetime
 from uuid import UUID
 
 import pytest
+from pydantic import ValidationError
 
 from telex.core.models import QueuedMessage, MessageStatus
 
@@ -43,10 +44,10 @@ def test_queued_message_priority_validation():
     assert msg3.priority == 5
 
     # Invalid priorities should raise validation error
-    with pytest.raises(Exception):  # Pydantic ValidationError
+    with pytest.raises(ValidationError):
         QueuedMessage(priority=-1)
 
-    with pytest.raises(Exception):  # Pydantic ValidationError
+    with pytest.raises(ValidationError):
         QueuedMessage(priority=11)
 
 

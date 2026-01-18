@@ -29,7 +29,6 @@ class DatabaseManager:
             db_path: Path to the SQLite database file
         """
         self.db_path = db_path
-        self._connection: Optional[aiosqlite.Connection] = None
         self._lock = asyncio.Lock()
 
     async def initialize(self) -> None:
@@ -102,8 +101,4 @@ class DatabaseManager:
         """
         Close the database manager.
         """
-        async with self._lock:
-            if self._connection:
-                await self._connection.close()
-                self._connection = None
         logger.info("Database manager closed")

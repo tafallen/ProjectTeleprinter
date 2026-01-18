@@ -97,44 +97,23 @@ class GarbageCollector:
 
         conn = await self.db_manager.get_connection()
         try:
-            # First, get IDs of messages to be deleted for logging
+            # Delete expired messages and count them
             cursor = await conn.execute(
                 """
-                SELECT id, created_at, priority, status
-                FROM message_queue
+                DELETE FROM message_queue
                 WHERE created_at < ?
                 """,
                 (cutoff_str,),
             )
-            rows = await cursor.fetchall()
+            await conn.commit()
 
-            if rows:
-                # Log each expired message
-                for row in rows:
-                    logger.info(
-                        "TTL Expired",
-                        message_id=row["id"],
-                        created_at=row["created_at"],
-                        priority=row["priority"],
-                        status=row["status"],
-                        ttl_hours=self.ttl_hours,
-                    )
-
-                # Delete expired messages
-                cursor = await conn.execute(
-                    """
-                    DELETE FROM message_queue
-                    WHERE created_at < ?
-                    """,
-                    (cutoff_str,),
-                )
-                await conn.commit()
-
-                deleted_count = cursor.rowcount
+            deleted_count = cursor.rowcount
+            if deleted_count > 0:
                 logger.info(
-                    "Garbage collection completed",
+                    "TTL Expired - Garbage collection completed",
                     deleted_count=deleted_count,
                     cutoff_time=cutoff_str,
+                    ttl_hours=self.ttl_hours,
                 )
             else:
                 logger.debug("No expired messages to clean up", cutoff_time=cutoff_str)
