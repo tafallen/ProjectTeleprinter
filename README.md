@@ -16,7 +16,7 @@ Project Telex implements a resilient messaging system with the following feature
 
 ### Technology Stack
 
-- **Language**: Python 3.15+
+- **Language**: Python 3.10+
 - **Async I/O**: asyncio for non-blocking TCP network operations
 - **Database**: SQLite for message queue persistence and deduplication
 - **Testing**: pytest with pytest-asyncio
@@ -32,7 +32,7 @@ Project Telex implements a resilient messaging system with the following feature
 
 ### Prerequisites
 
-- Python 3.15 or higher
+- Python 3.10 or higher
 - pip (Python package manager)
 
 ### Setup

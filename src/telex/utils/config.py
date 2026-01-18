@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class TelexConfig(BaseSettings):
@@ -15,6 +15,13 @@ class TelexConfig(BaseSettings):
 
     Settings can be overridden via environment variables with TELEX_ prefix.
     """
+
+    # Configuration
+    model_config = SettingsConfigDict(
+        env_prefix="TELEX_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
     # Node identification
     node_id: str = Field(
@@ -59,11 +66,6 @@ class TelexConfig(BaseSettings):
     # Logging
     log_level: str = Field(default="INFO", description="Logging level")
     log_format: str = Field(default="json", description="Log format (json or text)")
-
-    class Config:
-        env_prefix = "TELEX_"
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
 
 def load_config() -> TelexConfig:
