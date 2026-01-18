@@ -36,10 +36,24 @@ class TelexServer:
     def __init__(self, config_file: Optional[str] = None):
         self.running = False
         self.tasks: list[asyncio.Task] = []
+        self.tcp_server: Optional[asyncio.Server] = None
         
         # Load configuration
         self.config = load_config(config_file)
         logger.info("Configuration loaded", node_id=self.config.node_id)
+
+    async def handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+        """Handle incoming client connections."""
+        addr = writer.get_extra_info('peername')
+        logger.info("Connection received", address=addr)
+        print("Connection Received")
+        
+        try:
+            # Close the connection immediately after acknowledgment
+            writer.close()
+            await writer.wait_closed()
+        except Exception as e:
+            logger.error("Error closing connection", error=str(e))
 
     async def start(self):
         """Start the Telex server and all its components."""
@@ -50,7 +64,18 @@ class TelexServer:
             # TODO: Initialize database
             # TODO: Initialize message queue
             # TODO: Initialize routing engine
-            # TODO: Start network listener
+            
+            # Start network listener
+            self.tcp_server = await asyncio.start_server(
+                self.handle_client,
+                self.config.listen_host,
+                self.config.listen_port
+            )
+            
+            addrs = ', '.join(str(sock.getsockname()) for sock in self.tcp_server.sockets)
+            logger.info("TCP server listening", addresses=addrs)
+            print(f"TCP server listening on {addrs}")
+            
             # TODO: Initialize hardware interface (if available)
 
             logger.info("Telex server started successfully")
@@ -70,6 +95,12 @@ class TelexServer:
         logger.info("Stopping Telex server")
         self.running = False
 
+        # Close TCP server
+        if self.tcp_server:
+            self.tcp_server.close()
+            await self.tcp_server.wait_closed()
+            logger.info("TCP server closed")
+
         # Cancel all running tasks
         for task in self.tasks:
             task.cancel()
@@ -80,7 +111,6 @@ class TelexServer:
 
         # TODO: Close database connections
         # TODO: Flush message queue
-        # TODO: Close network connections
         # TODO: Cleanup hardware interface
 
         logger.info("Telex server stopped")
