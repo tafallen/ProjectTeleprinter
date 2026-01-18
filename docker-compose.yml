@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  telex-node-a:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telex-node-a
+    hostname: telex-node-a
+    networks:
+      - telex-net
+    volumes:
+      - ./scripts/sim_configs/node_a.json:/etc/telex/config.json:ro
+      - telex-node-a-data:/app/telex_data
+    ports:
+      - "8023:8023"
+    environment:
+      - TELEX_NODE_ID=DUN-A
+      - TELEX_LOCATION_CODE=DUN
+      - TELEX_MACHINE_ID=A
+      - TELEX_LISTEN_HOST=0.0.0.0
+      - TELEX_LISTEN_PORT=8023
+    restart: unless-stopped
+
+  telex-node-b:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telex-node-b
+    hostname: telex-node-b
+    networks:
+      - telex-net
+    volumes:
+      - ./scripts/sim_configs/node_b.json:/etc/telex/config.json:ro
+      - telex-node-b-data:/app/telex_data
+    ports:
+      - "8024:8023"
+    environment:
+      - TELEX_NODE_ID=LON-B
+      - TELEX_LOCATION_CODE=LON
+      - TELEX_MACHINE_ID=B
+      - TELEX_LISTEN_HOST=0.0.0.0
+      - TELEX_LISTEN_PORT=8023
+    restart: unless-stopped
+
+  telex-node-c:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telex-node-c
+    hostname: telex-node-c
+    networks:
+      - telex-net
+    volumes:
+      - ./scripts/sim_configs/node_c.json:/etc/telex/config.json:ro
+      - telex-node-c-data:/app/telex_data
+    ports:
+      - "8025:8023"
+    environment:
+      - TELEX_NODE_ID=NYC-C
+      - TELEX_LOCATION_CODE=NYC
+      - TELEX_MACHINE_ID=C
+      - TELEX_LISTEN_HOST=0.0.0.0
+      - TELEX_LISTEN_PORT=8023
+    restart: unless-stopped
+
+networks:
+  telex-net:
+    driver: bridge
+    name: telex-net
+
+volumes:
+  telex-node-a-data:
+  telex-node-b-data:
+  telex-node-c-data:

@@ -139,3 +139,7 @@ Thumbs.db
 *.sqlite3
 message_queue.db
 dedup_history.db
+
+# Docker
+telex_data/
+.dockerignore

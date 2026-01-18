@@ -1,0 +1,27 @@
+{
+  "node_id": "LON-B",
+  "location_code": "LON",
+  "machine_id": "B",
+  "listen_host": "0.0.0.0",
+  "listen_port": 8023,
+  "max_connections": 100,
+  "message_ttl_hours": 72,
+  "max_message_size": 65536,
+  "database_path": "telex_data/messages.db",
+  "dedup_db_path": "telex_data/dedup.db",
+  "hardware_enabled": false,
+  "log_level": "INFO",
+  "log_format": "json",
+  "neighbors": [
+    {
+      "node_id": "DUN-A",
+      "host": "telex-node-a",
+      "port": 8023
+    },
+    {
+      "node_id": "NYC-C",
+      "host": "telex-node-c",
+      "port": 8023
+    }
+  ]
+}
