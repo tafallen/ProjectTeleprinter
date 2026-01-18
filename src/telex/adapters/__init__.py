@@ -1,7 +1,6 @@
 """
-Adapters module for Project Telex.
-
-This module contains network adapters and other I/O adapters.
+Adapters package for external integrations and persistence.
 """
+from .database import DatabaseManager, DeduplicationDAO
 
-__all__ = ["AsyncTCPNetworkAdapter"]
+__all__ = ["DatabaseManager", "DeduplicationDAO", "AsyncTCPNetworkAdapter"]
