@@ -4,8 +4,6 @@ Database adapter module for SQLite persistence.
 This module provides async database management and deduplication functionality
 using aiosqlite to prevent blocking the AsyncIO event loop.
 """
-import asyncio
-import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
