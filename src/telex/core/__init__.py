@@ -1,7 +1,27 @@
 """
 Core module for Project Telex.
 
-This module contains core domain models and business logic.
+This module contains:
+- Database management
+- Data Access Objects (DAOs)
+- Background services (garbage collection)
+- Core domain models 
+- Business logic
 """
 
-__all__ = ["TelexMessage", "RoutingInfo", "MessageContent", "TraceEntry"]
+from telex.core.database import DatabaseManager
+from telex.core.dao import MessageQueueDAO
+from telex.core.garbage_collector import GarbageCollector
+from telex.core.models import QueuedMessage, MessageStatus
+
+__all__ = [
+    "DatabaseManager",
+    "MessageQueueDAO",
+    "GarbageCollector",
+    "QueuedMessage",
+    "MessageStatus", 
+    "TelexMessage", 
+    "RoutingInfo", 
+    "MessageContent", 
+    "TraceEntry"
+]

@@ -11,6 +11,7 @@ from typing import Optional
 import structlog
 
 from telex.utils.config import load_config
+from telex.core import DatabaseManager, MessageQueueDAO, GarbageCollector
 
 
 # Configure structured logging
@@ -42,6 +43,11 @@ class TelexServer:
         self.config = load_config(config_file)
         logger.info("Configuration loaded", node_id=self.config.node_id)
 
+        # Initialize core components (will be started in start())
+        self.db_manager: Optional[DatabaseManager] = None
+        self.message_dao: Optional[MessageQueueDAO] = None
+        self.garbage_collector: Optional[GarbageCollector] = None
+
     async def handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         """Handle incoming client connections."""
         addr = writer.get_extra_info('peername')
@@ -61,8 +67,24 @@ class TelexServer:
         self.running = True
 
         try:
-            # TODO: Initialize database
-            # TODO: Initialize message queue
+            # Initialize database
+            self.db_manager = DatabaseManager(self.config.database_path)
+            await self.db_manager.initialize()
+            logger.info("Database initialized", path=str(self.config.database_path))
+
+            # Initialize message queue DAO
+            self.message_dao = MessageQueueDAO(self.db_manager)
+            logger.info("Message queue DAO initialized")
+
+            # Start garbage collector
+            self.garbage_collector = GarbageCollector(
+                self.db_manager,
+                ttl_hours=self.config.message_ttl_hours,
+                interval_seconds=60,
+            )
+            await self.garbage_collector.start()
+            logger.info("Garbage collector started")
+
             # TODO: Initialize routing engine
             
             # Start network listener
@@ -95,6 +117,11 @@ class TelexServer:
         logger.info("Stopping Telex server")
         self.running = False
 
+        # Stop garbage collector
+        if self.garbage_collector:
+            await self.garbage_collector.stop()
+            logger.info("Garbage collector stopped")
+
         # Close TCP server
         if self.tcp_server:
             self.tcp_server.close()
@@ -109,7 +136,11 @@ class TelexServer:
         if self.tasks:
             await asyncio.gather(*self.tasks, return_exceptions=True)
 
-        # TODO: Close database connections
+        # Close database connections
+        if self.db_manager:
+            await self.db_manager.close()
+            logger.info("Database closed")
+
         # TODO: Flush message queue
         # TODO: Cleanup hardware interface
 
