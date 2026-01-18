@@ -1,0 +1,102 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "telex"
+version = "0.1.0"
+description = "A modern replica of a distributed, store-and-forward telex system"
+readme = "README.md"
+requires-python = ">=3.15"
+license = {text = "MIT"}
+authors = [
+    {name = "Project Telex Team"}
+]
+keywords = ["telex", "messaging", "federated", "mesh-network"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Communications",
+    "Topic :: System :: Networking",
+]
+
+dependencies = [
+    "pyserial>=3.5",
+    "python-dotenv>=1.0.0",
+    "structlog>=24.1.0",
+    "pydantic>=2.0.0",
+    "aiofiles>=23.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "black>=24.0.0",
+    "flake8>=7.0.0",
+    "pylint>=3.0.0",
+    "mypy>=1.8.0",
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "ipython>=8.20.0",
+    "ipdb>=0.13.13",
+]
+
+[project.urls]
+Homepage = "https://github.com/tafallen/ProjectTeleprinter"
+Repository = "https://github.com/tafallen/ProjectTeleprinter"
+
+[project.scripts]
+telex-server = "telex.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --strict-markers"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/test_*.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py315']
+include = '\.pyi?$'
+
+[tool.mypy]
+python_version = "3.15"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+
+[[tool.mypy.overrides]]
+module = "serial.*"
+ignore_missing_imports = true
