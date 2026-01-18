@@ -3,11 +3,14 @@ Main entry point for the Telex server application.
 """
 import asyncio
 import logging
+import os
 import signal
 import sys
 from typing import Optional
 
 import structlog
+
+from telex.utils.config import load_config
 
 
 # Configure structured logging
@@ -30,9 +33,13 @@ logger = structlog.get_logger(__name__)
 class TelexServer:
     """Main Telex server class that coordinates all components."""
 
-    def __init__(self):
+    def __init__(self, config_file: Optional[str] = None):
         self.running = False
         self.tasks: list[asyncio.Task] = []
+        
+        # Load configuration
+        self.config = load_config(config_file)
+        logger.info("Configuration loaded", node_id=self.config.node_id)
 
     async def start(self):
         """Start the Telex server and all its components."""
@@ -91,7 +98,12 @@ def handle_signal(server: TelexServer):
 
 async def async_main():
     """Async main function."""
-    server = TelexServer()
+    # Check for config file (e.g., mounted in Docker at /etc/telex/config.json)
+    config_file = os.environ.get('TELEX_CONFIG_FILE', '/etc/telex/config.json')
+    if not os.path.exists(config_file):
+        config_file = None
+    
+    server = TelexServer(config_file=config_file)
 
     # Setup signal handlers for graceful shutdown
     signal.signal(signal.SIGINT, handle_signal(server))

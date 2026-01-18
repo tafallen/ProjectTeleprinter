@@ -14,12 +14,6 @@ services:
       - telex-node-a-data:/app/telex_data
     ports:
       - "8023:8023"
-    environment:
-      - TELEX_NODE_ID=DUN-A
-      - TELEX_LOCATION_CODE=DUN
-      - TELEX_MACHINE_ID=A
-      - TELEX_LISTEN_HOST=0.0.0.0
-      - TELEX_LISTEN_PORT=8023
     restart: unless-stopped
 
   telex-node-b:
@@ -35,12 +29,6 @@ services:
       - telex-node-b-data:/app/telex_data
     ports:
       - "8024:8023"
-    environment:
-      - TELEX_NODE_ID=LON-B
-      - TELEX_LOCATION_CODE=LON
-      - TELEX_MACHINE_ID=B
-      - TELEX_LISTEN_HOST=0.0.0.0
-      - TELEX_LISTEN_PORT=8023
     restart: unless-stopped
 
   telex-node-c:
@@ -56,12 +44,6 @@ services:
       - telex-node-c-data:/app/telex_data
     ports:
       - "8025:8023"
-    environment:
-      - TELEX_NODE_ID=NYC-C
-      - TELEX_LOCATION_CODE=NYC
-      - TELEX_MACHINE_ID=C
-      - TELEX_LISTEN_HOST=0.0.0.0
-      - TELEX_LISTEN_PORT=8023
     restart: unless-stopped
 
 networks:

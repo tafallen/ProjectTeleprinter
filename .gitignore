@@ -142,4 +142,3 @@ dedup_history.db
 
 # Docker
 telex_data/
-.dockerignore
