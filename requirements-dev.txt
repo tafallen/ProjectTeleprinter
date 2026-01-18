@@ -1,0 +1,24 @@
+# Development dependencies for Project Telex
+
+# Include production dependencies
+-r requirements.txt
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# Code quality
+black>=24.0.0
+flake8>=7.0.0
+pylint>=3.0.0
+mypy>=1.8.0
+
+# Documentation
+sphinx>=7.0.0
+sphinx-rtd-theme>=2.0.0
+
+# Development utilities
+ipython>=8.20.0
+ipdb>=0.13.13

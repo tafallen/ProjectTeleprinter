@@ -1,0 +1,23 @@
+# Core dependencies for Project Telex
+# Python 3.15+ required
+
+# Asyncio is part of Python standard library (3.4+)
+
+# Database
+# SQLite is part of Python standard library
+
+# Serial communication for hardware interface
+pyserial>=3.5
+
+# Configuration management
+python-dotenv>=1.0.0
+
+# Logging and monitoring
+structlog>=24.1.0
+
+# Data validation
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Async utilities
+aiofiles>=23.0.0
