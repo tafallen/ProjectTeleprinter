@@ -5,6 +5,7 @@
 
 # Database
 # SQLite is part of Python standard library
+aiosqlite>=0.19.0
 
 # Serial communication for hardware interface
 pyserial>=3.5

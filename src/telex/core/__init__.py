@@ -5,6 +5,8 @@ This module contains:
 - Database management
 - Data Access Objects (DAOs)
 - Background services (garbage collection)
+- Core domain models 
+- Business logic
 """
 
 from telex.core.database import DatabaseManager
@@ -17,5 +19,9 @@ __all__ = [
     "MessageQueueDAO",
     "GarbageCollector",
     "QueuedMessage",
-    "MessageStatus",
+    "MessageStatus", 
+    "TelexMessage", 
+    "RoutingInfo", 
+    "MessageContent", 
+    "TraceEntry"
 ]
