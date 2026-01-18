@@ -3,10 +3,18 @@ Configuration management for the Telex system.
 """
 import os
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class NeighborConfig(BaseModel):
+    """Configuration for a neighbor node in the mesh network."""
+
+    node_id: str = Field(description="Neighbor node ID")
+    host: str = Field(description="Hostname or IP address of the neighbor")
+    port: int = Field(default=8023, description="Port number of the neighbor")
 
 
 class TelexConfig(BaseSettings):
@@ -36,6 +44,11 @@ class TelexConfig(BaseSettings):
     listen_host: str = Field(default="0.0.0.0", description="Host to bind server to")
     listen_port: int = Field(default=8023, description="Port to bind server to")
     max_connections: int = Field(default=100, description="Maximum concurrent connections")
+
+    # Neighbor nodes (for mesh network routing)
+    neighbors: List[NeighborConfig] = Field(
+        default_factory=list, description="List of neighbor nodes in the mesh network"
+    )
 
     # Message settings
     message_ttl_hours: int = Field(
@@ -68,6 +81,22 @@ class TelexConfig(BaseSettings):
     log_format: str = Field(default="json", description="Log format (json or text)")
 
 
-def load_config() -> TelexConfig:
-    """Load configuration from environment and .env file."""
-    return TelexConfig()
+def load_config(config_file: Optional[str] = None) -> TelexConfig:
+    """
+    Load configuration from environment, .env file, or JSON file.
+    
+    Args:
+        config_file: Optional path to a JSON configuration file (e.g., /etc/telex/config.json)
+    
+    Returns:
+        TelexConfig instance with loaded configuration
+    """
+    if config_file and Path(config_file).exists():
+        # Load from JSON file
+        import json
+        with open(config_file, 'r') as f:
+            config_data = json.load(f)
+        return TelexConfig(**config_data)
+    else:
+        # Load from environment and .env file
+        return TelexConfig()
